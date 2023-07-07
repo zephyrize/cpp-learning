@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/swap.h
+iostream
+-
+
+/home/sophia/Documents/cpp-learning/2023-07/week-1/cmake-swap/main.cpp
+swap.h
+/home/sophia/Documents/cpp-learning/2023-07/week-1/cmake-swap/swap.h
+
+/home/sophia/Documents/cpp-learning/2023-07/week-1/cmake-swap/src/swap.cpp
+swap.h
+/home/sophia/Documents/cpp-learning/2023-07/week-1/cmake-swap/src/swap.h
+

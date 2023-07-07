@@ -1,0 +1,3 @@
+/home/sophia/Documents/cpp-learning/2023-07/week-1/cmake-swap/build/CMakeFiles/rebuild_cache.dir
+/home/sophia/Documents/cpp-learning/2023-07/week-1/cmake-swap/build/CMakeFiles/edit_cache.dir
+/home/sophia/Documents/cpp-learning/2023-07/week-1/cmake-swap/build/CMakeFiles/main_cmake.dir

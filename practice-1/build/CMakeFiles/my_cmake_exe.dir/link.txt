@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/my_cmake_exe.dir/src/main.cpp.o CMakeFiles/my_cmake_exe.dir/src/shape.cpp.o CMakeFiles/my_cmake_exe.dir/src/rectangle.cpp.o CMakeFiles/my_cmake_exe.dir/src/circle.cpp.o CMakeFiles/my_cmake_exe.dir/src/color.cpp.o CMakeFiles/my_cmake_exe.dir/src/shape_container.cpp.o CMakeFiles/my_cmake_exe.dir/src/file_manager.cpp.o  -o my_cmake_exe 
