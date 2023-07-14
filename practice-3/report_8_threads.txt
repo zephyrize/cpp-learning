@@ -1,0 +1,50 @@
+Test 1: 10000 increments
+Threads: 8
+Atomic time: 0 ms
+Mutex time: 0 ms
+
+Test 2: 50000 increments
+Threads: 8
+Atomic time: 2 ms
+Mutex time: 3 ms
+
+Test 3: 100000 increments
+Threads: 8
+Atomic time: 3 ms
+Mutex time: 4 ms
+
+Test 4: 500000 increments
+Threads: 8
+Atomic time: 18 ms
+Mutex time: 22 ms
+
+Test 5: 1000000 increments
+Threads: 8
+Atomic time: 35 ms
+Mutex time: 43 ms
+
+Test 1: 10000 increments
+Threads: 8
+Atomic time: 0 ms
+Mutex time: 0 ms
+
+Test 2: 50000 increments
+Threads: 8
+Atomic time: 1 ms
+Mutex time: 7 ms
+
+Test 3: 100000 increments
+Threads: 8
+Atomic time: 3 ms
+Mutex time: 8 ms
+
+Test 4: 500000 increments
+Threads: 8
+Atomic time: 18 ms
+Mutex time: 26 ms
+
+Test 5: 1000000 increments
+Threads: 8
+Atomic time: 35 ms
+Mutex time: 51 ms
+
