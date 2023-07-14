@@ -1,0 +1,9 @@
+设计思路：
+\begin{DoxyItemize}
+\item 首先，设计一个抽象类（例如名为 {\ttfamily \mbox{\hyperlink{classShape}{Shape}}}），它具有纯虚函数 {\ttfamily calculate\+Area()} 、 {\ttfamily draw()} 和 {\ttfamily set\+Color()}. 这个类代表了几何形状的概念，并提供了一个接口用于计算面积和绘制形状。
+\item 接下来，设计两个继承类，分别代表不同的具体几何形状。本实践中，设计了一个 {\ttfamily \mbox{\hyperlink{classRectangle}{Rectangle}}} 类和一个 {\ttfamily \mbox{\hyperlink{classCircle}{Circle}}} 类，它们都继承自抽象类 {\ttfamily \mbox{\hyperlink{classShape}{Shape}}}。这两个类实现抽象类中的纯虚函数。
+\item 每个具体几何形状类可以拥有与其关联的其他类。这里，设置了一个 {\ttfamily \mbox{\hyperlink{classColor}{Color}}} 类，用于表示形状的颜色。每个具体几何形状都可以关联一个 {\ttfamily \mbox{\hyperlink{classColor}{Color}}} 对象。
+\item 进一步扩展，设计一个 {\ttfamily \mbox{\hyperlink{classShapeContainer}{Shape\+Container}}} 类，用于存储多个形状对象。这个类使用 S\+TL 中的容器（ {\ttfamily std\+::vector}）来管理形状对象的集合。{\ttfamily \mbox{\hyperlink{classShapeContainer}{Shape\+Container}}} 类可以提供一些函数用于添加、删除和查找形状对象。
+\item 在项目中使用指针和引用来操作对象。在 {\ttfamily \mbox{\hyperlink{classShapeContainer}{Shape\+Container}}} 类中使用指向抽象类 {\ttfamily \mbox{\hyperlink{classShape}{Shape}}} 的指针来管理不同类型的形状对象。
+\item 为了实现文件的操作，在项目中添加文件读写的功能。本实践设计一个 {\ttfamily \mbox{\hyperlink{classFileManager}{File\+Manager}}} 类，用于读取形状对象的信息并将其保存到文件中，或从文件中加载形状对象。 
+\end{DoxyItemize}

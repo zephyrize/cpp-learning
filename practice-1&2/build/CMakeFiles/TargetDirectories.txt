@@ -1,0 +1,3 @@
+/home/sophia/Documents/cpp-learning/practice-1/build/CMakeFiles/rebuild_cache.dir
+/home/sophia/Documents/cpp-learning/practice-1/build/CMakeFiles/edit_cache.dir
+/home/sophia/Documents/cpp-learning/practice-1/build/CMakeFiles/my_cmake_exe.dir
