@@ -9,7 +9,7 @@ class Task {
 public:
     using Callback = function<void(int)>;
 
-    Task(int id, Callback callback) : id_(id), callback_(move(callback)) {}
+    Task(int id, Callback callback) : id_(id), callback_(std::move(callback)) {}
 
     void execute() {
         cout << "Executing task " << id_ << endl;
@@ -34,9 +34,6 @@ public:
             
             // cout<<"Processing tasks"<<endl;
 
-            /*
-            由于是顺序队列任务，这里似乎没必要加锁，因为之前写了一个异步队列没跑起来，加锁的代码先留着，有时间重新再写一个异步队列尝试一下。
-            */
             weak_ptr<Task> task;
 
             {
@@ -94,6 +91,21 @@ int main() {
 
     // 执行任务队列
     queue.processTasks();
+
+    // std::thread worker([&]() {
+    //     queue.processTasks();
+    // });
+    // worker.join();
+
+    // vector<thread> workers;
+    // for (int i = 0; i < 3; i++) {
+    //     workers.emplace_back([&]() {
+    //         queue.processTasks();
+    //     });
+    // }
+    // for (auto& worker : workers) {
+    //     worker.join();
+    // }
 
     return 0;
 }
