@@ -5,24 +5,29 @@
 
 using namespace std;
 
-class Task {
-public:
-    using Callback = function<void(int)>;
+using Callback = function<void(int)>;
 
+class Task {
+private:
+    int id_;
+    Callback callback_;
+
+public:
     Task(int id, Callback callback) : id_(id), callback_(std::move(callback)) {}
 
     void execute() {
         cout << "Executing task " << id_ << endl;
         callback_(id_);
     }
-
-private:
-    int id_;
-    Callback callback_;
 };
 
 
 class TaskQueue {
+
+private:
+    queue<shared_ptr<Task>> tasks_;
+    mutex mutex_;
+
 public:
     void addTask(shared_ptr<Task> task) {
         lock_guard<mutex> lock(mutex_);
@@ -55,10 +60,6 @@ public:
             }
         }
     }
-
-private:
-    queue<shared_ptr<Task>> tasks_;
-    mutex mutex_;
 };
 
 int main() {
