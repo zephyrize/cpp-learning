@@ -29,7 +29,6 @@ ThreadPool::ThreadPool(int num_threads) : stop(false) {
 
                 /*
                 上面的逻辑问题 主要表现在 析构函数会在线程完成所有任务前把ThreadPool释放掉。
-                
                 */
                 if (!task_queue.empty()) {
                     auto task = task_queue.front();
