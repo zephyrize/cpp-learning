@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
+#include <cmath>
 #include "threadpool.h"
-
 using namespace std;
 
 ThreadPool::ThreadPool(int num_threads) : stop(false) {
@@ -9,27 +9,6 @@ ThreadPool::ThreadPool(int num_threads) : stop(false) {
         threads.emplace_back([this] {
             while (true) {
                 unique_lock<mutex> lock(this->mtx);
-                
-                /*
-                写的第一个版本，判断的逻辑有点问题
-                */
-                // if (stop == true) {
-                //     break;
-                // }
-                // else if (task_queue.empty()) {
-                //     condition.wait(lock);
-                // }
-                // else {
-                //     auto task = task_queue.front();
-                //     task_queue.pop();
-                //     lock.unlock();
-                //     task();
-                //     lock.lock();
-                // }
-
-                /*
-                上面的逻辑问题 主要表现在 析构函数会在线程完成所有任务前把ThreadPool释放掉。
-                */
                 if (!task_queue.empty()) {
                     auto task = task_queue.front();
                     task_queue.pop();
@@ -43,7 +22,6 @@ ThreadPool::ThreadPool(int num_threads) : stop(false) {
                 else {
                     condition.wait(lock);
                 }
-
             } 
         });
     }

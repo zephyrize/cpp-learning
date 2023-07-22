@@ -12,6 +12,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <fstream>
+#include <cmath>
 
 using namespace std;
 class ThreadPool {
@@ -97,50 +98,50 @@ public:
 // }
 
 
-void task (int n) {
-    double sum = 0;
-    for (int i = 0; i < n; i++) {
-        sum += sqrt(i);
-    }
-    // cout << sum << endl;
-}
+// void task (int n) {
+//     double sum = 0;
+//     for (int i = 0; i < n; i++) {
+//         sum += sqrt(i);
+//     }
+//     // cout << sum << endl;
+// }
 
-int main() {
-    // ThreadPool thread_pool(4);
-    // thread_pool.addTask(task1);
-    // thread_pool.addTask(task2);
-    // thread_pool.addTask(task3);
-    // thread_pool.addTask(task4);
+// int main() {
+//     // ThreadPool thread_pool(4);
+//     // thread_pool.addTask(task1);
+//     // thread_pool.addTask(task2);
+//     // thread_pool.addTask(task3);
+//     // thread_pool.addTask(task4);
 
-    // this_thread::sleep_for(chrono::seconds(4));
+//     // this_thread::sleep_for(chrono::seconds(4));
 
-    ofstream outfile("report.csv");
+//     // ofstream outfile("report.csv");
 
-    for (int num_threads = 1; num_threads <= 8; num_threads*=2) {
+//     for (int num_threads = 1; num_threads <= 8; num_threads*=2) {
         
-        // 记录执行时间
-        auto start = chrono::high_resolution_clock::now();
+//         // 记录执行时间
+//         auto start = chrono::high_resolution_clock::now();
 
-        {
-            ThreadPool pool(num_threads);
-            int num_tasks = 8;
+//         {
+//             ThreadPool pool(num_threads);
+//             int num_tasks = 8;
 
-            for (int i = 0; i < num_tasks; i++) {
-                pool.addTask([=] { task(1e8); }); 
-            }
-        }   
+//             for (int i = 0; i < num_tasks; i++) {
+//                 pool.addTask([=] { task(1e8); }); 
+//             }
+//         }   
 
-        // pool.addTask([] {});
-        auto end = chrono::high_resolution_clock::now();
+//         // pool.addTask([] {});
+//         auto end = chrono::high_resolution_clock::now();
 
-        auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
+//         auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
 
-        outfile << num_threads << "," << duration.count() << endl;
-        cout << num_threads << " threads: " << duration.count() << " ms" << endl;
+//         // outfile << num_threads << "," << duration.count() << endl;
+//         cout << num_threads << " threads: " << duration.count() << " ms" << endl;
         
-    }
+//     }
     
-    outfile.close();
+//     // outfile.close();
 
-    return 0;
-}
+//     return 0;
+// }

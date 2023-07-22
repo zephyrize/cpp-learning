@@ -34,3 +34,8 @@
 
 目前还没搞明白这是为啥- -。
 
+
+更新：
+在linux系统中需要链接pthread库
+编译：g++ -pthread threadpool-improved.cpp -o threadpool-improved
+运行：./threadpool-improved

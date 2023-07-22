@@ -1,0 +1,4 @@
+/home/sophia/Documents/cpp-learning/practice-5/build/CMakeFiles/edit_cache.dir
+/home/sophia/Documents/cpp-learning/practice-5/build/CMakeFiles/client_exe.dir
+/home/sophia/Documents/cpp-learning/practice-5/build/CMakeFiles/rebuild_cache.dir
+/home/sophia/Documents/cpp-learning/practice-5/build/CMakeFiles/server_exe.dir

@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/sophia/Documents/cpp-learning/practice-5/client.cpp
+fcntl.h
+-
+unistd.h
+-
+arpa/inet.h
+-
+sys/epoll.h
+-
+vector
+-
+thread
+-
+cstring
+-
+iostream
+-
+
