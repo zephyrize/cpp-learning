@@ -12,7 +12,7 @@ using namespace std;
 
 const int MAX_EVENTS = 10;
 const int MAX_CLIENTS = 5;
-const int PORT = 12345;
+const int SERVER_PORT = 12345;
 const int NUM_CLIENTS = 5;
 
 void setNonBlocking(int sockfd) {
@@ -32,9 +32,9 @@ void clientTask (int client_id) {
 
     setNonBlocking(client_socket);
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT);
+    server_addr.sin_port = htons(SERVER_PORT);
 
-    if (inet_pton(AF_INET, "127.0.0.1", &(server_addr.sin_addr)) <= 0) {
+    if (inet_pton(AF_INET, "192.168.1.106", &(server_addr.sin_addr)) <= 0) {
         cerr << "非法地址. Client " << client_id << endl;
         close(client_socket);
         return;
@@ -90,7 +90,6 @@ void clientTask (int client_id) {
                         string response(buffer, reading_bytes);
                         cout << "客户端接收到数据, Client " << client_id << ": " << response << endl;
                     }
-
                 }
             }
         }

@@ -17,13 +17,13 @@
 class Server {
 
 private:
-    const int PORT = 12345;
+    const int SERVER_PORT = 12345;
     const int MAX_CLIENTS = 6;
     const int MAX_EVENTS = 6;
 
     // struct epoll_event event{};
-    struct sockaddr_in server_addr{}, client_addr{};
-    socklen_t client_addr_size = sizeof(client_addr);
+    struct sockaddr_in server_addr_{}, client_addr_{};
+    socklen_t client_addr_size = sizeof(client_addr_);
 
     int server_socket_fd_;
     int epoll_fd_;
@@ -52,7 +52,7 @@ public:
     epoll 相关
     */
     // 创建epoll实例
-    bool epollCreateInstance();
+    int epollCreateInstance();
     // epoll添加fd
     bool epollAddFd(int fd, uint32_t event);
 
@@ -67,6 +67,5 @@ public:
     void processWriteEvent(int);
     void writeEvent(int);
     void readEvent(int);
-    
     
 };

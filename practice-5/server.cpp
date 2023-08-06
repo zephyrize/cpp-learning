@@ -5,10 +5,10 @@ using namespace std;
 void setNonBlocking(int);
 
 Server::Server() {
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT);
-    server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    memset(server_addr.sin_zero, '\0', sizeof(server_addr.sin_zero));
+    server_addr_.sin_family = AF_INET;
+    server_addr_.sin_port = htons(SERVER_PORT);
+    server_addr_.sin_addr.s_addr = INADDR_ANY;
+    memset(server_addr_.sin_zero, '\0', sizeof(server_addr_.sin_zero));
 
     threadpool_ = std::make_unique<ThreadPool>(8);
 
@@ -36,7 +36,7 @@ bool Server::initSocket() {
     }
 
     // bind
-    int bind_res = bind(server_socket_fd_, (struct sockaddr *) &server_addr, sizeof(server_addr));
+    int bind_res = bind(server_socket_fd_, (struct sockaddr *) &server_addr_, sizeof(server_addr_));
     if (bind_res < 0) {
         cerr << "绑定socket失败." << endl;
         close(server_socket_fd_);
@@ -69,14 +69,14 @@ bool Server::initSocket() {
     return true;
 }
 
-bool Server::epollCreateInstance() {
+int Server::epollCreateInstance() {
     return epoll_create1(0);
 }
 
 bool Server::epollAddFd(int fd, uint32_t ev) {
     if (fd < 0) return false;
 
-    struct epoll_event event{};
+    struct epoll_event event = {0};
     event.data.fd = fd;
     event.events = ev;
     int add_res = epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, fd, &event);
