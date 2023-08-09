@@ -208,7 +208,7 @@ void Server::writeEvent(int client_fd) {
         close(client_fd);
         closeSocket(client_fd);
     }
-    cout << "返回数据给客户端(Socket id:)" << client_fd << "成功！";
+    cout << "返回数据给客户端(Socket id:)" << client_fd << "成功！" << endl;
     closeSocket(client_fd);
 }
 

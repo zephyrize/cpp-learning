@@ -33,9 +33,9 @@ void clientTask (int client_id) {
 
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(SERVER_PORT);
-    server_addr.sin_addr.s_addr = inet_addr("192.168.1.106");
+    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
-    // if (inet_pton(AF_INET, "192.168.1.106", &(server_addr.sin_addr)) <= 0) {
+    // if (inet_pton(AF_INET, "127.0.0.1", &(server_addr.sin_addr)) <= 0) {
     //     cerr << "非法地址. Client " << client_id << endl;
     //     close(client_socket);
     //     return;
@@ -65,50 +65,42 @@ void clientTask (int client_id) {
         return;
     }
 
-    cout << "Client " << client_id << " 已连接到服务器" << endl;
-
-    // stringstream message_stream;
-    // message_stream << "Hello server! I am Client with id: " << client_id << ".";
-    // string message = message_stream.str();
-
     setNonBlocking(client_socket);
 
-    string message = "Hello server! I am Client with id: " + to_string(client_id) + ".";
+    cout << "Client " << client_id << " 已连接到服务器" << endl;
 
+    string message = "Hello server! I am Client with id: " + to_string(client_id) + ".";
     send(client_socket, message.c_str(), message.length(), 0);
 
-    while (true) {
-        struct epoll_event events[MAX_EVENTS];
-        int ready_events = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
-        for (int i = 0; i < ready_events; ++i) {
-            
-            if (events[i].data.fd == client_socket) {
-                int reading_bytes = 0;
-                while(true) {
-                    reading_bytes = read(client_socket, buffer, sizeof(buffer));
-                    if (reading_bytes == -1) {
-                        if (errno != EAGAIN) {
-                            cerr << "从服务端读取数据失败, Client " << client_id << endl;
-                            close(client_socket);
-                            return;
-                        }
-                        break;
-                    }
-                    else if (reading_bytes == 0) {
-                        cout << "服务端断开连接, Client " << client_id << endl;
+    struct epoll_event events[MAX_EVENTS];
+    int ready_events = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
+    for (int i = 0; i < ready_events; ++i) {
+        if (events[i].data.fd == client_socket) {
+            int reading_bytes = 0;
+            while(true) {
+                reading_bytes = read(client_socket, buffer, sizeof(buffer));
+                if (reading_bytes == -1) {
+                    if (errno != EAGAIN) {
+                        cerr << "从服务端读取数据失败, Client " << client_id << endl;
                         close(client_socket);
                         return;
                     }
-                    else {
-                        string response(buffer, reading_bytes);
-                        cout << "客户端接收到数据, Client " << client_id << ": " << response << endl;
-                    }
+                    break;
+                }
+                else if (reading_bytes == 0) {
+                    cout << "服务端断开连接, Client " << client_id << endl;
+                    close(client_socket);
+                    return;
+                }
+                else {
+                    string response(buffer, reading_bytes);
+                    cout << "客户端接收到数据, Client " << client_id << ": " << response << endl;
                 }
             }
         }
-        close(client_socket);
-        close(epoll_fd);
     }
+    close(client_socket);
+    close(epoll_fd);
 }
 
 
