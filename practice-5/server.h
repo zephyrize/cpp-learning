@@ -44,7 +44,7 @@ public:
     // 初始化server
     bool initSocket();
     // 关闭server
-    void closeSocket();
+    void closeSocket(int);
     //运行server
     void run();
 
@@ -55,6 +55,8 @@ public:
     int epollCreateInstance();
     // epoll添加fd
     bool epollAddFd(int fd, uint32_t event);
+    bool epollModFd(int fd, uint32_t event);
+    bool epollDelFd(int fd);
 
     /*
     client相关

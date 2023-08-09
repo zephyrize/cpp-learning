@@ -87,6 +87,20 @@ bool Server::epollAddFd(int fd, uint32_t ev) {
     return true;
 }
 
+bool Server::epollModFd(int fd, uint32_t ev) {
+    if(fd < 0) return false;
+    epoll_event event = {0};
+    event.data.fd = fd;
+    event.events = ev;
+    return epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, fd, &event) == 0;
+}
+
+bool Server::epollDelFd(int fd) {
+    if (fd < 0) return false;
+    struct epoll_event event = {0};
+    return epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, fd, &event) == 0;
+}
+
 void Server::run() {
     while (true) {
         struct epoll_event events[MAX_EVENTS];
@@ -103,11 +117,13 @@ void Server::run() {
             }
             // 读事件
             else if (events[i].events & EPOLLIN) {
+                // cout << "触发读事件 " << endl;
                 processReadEvent(events[i].data.fd);
             }
             // 写事件
             else if (events[i].events & EPOLLOUT) {
-
+                // cout << "触发写事件 " << endl;
+                processWriteEvent(events[i].data.fd);
             }
             else {
                 cout << "监听事件发生了错误." << endl;
@@ -162,45 +178,49 @@ void Server::processReadEvent(int client_fd) {
 }
 
 void Server::readEvent(int client_fd) {
-
+    cout<< "处理读事件" << endl;
     char buffer[1024];
     int reading_bytes = 0;
     // string request_body;
     while (true) {
         reading_bytes = read(client_fd, buffer, sizeof(buffer));
-        if (reading_bytes == -1) {
+        if (reading_bytes <= 0) {
             if (errno != EAGAIN) {
-                cerr << "从客户端中读取数据失败, Socket fd: " << client_fd << endl;
-                delClient(client_fd);
-                close(client_fd);
+                closeSocket(client_fd);
             }
-            break;
+            break ;
         }
-        // 客户端已关闭
-        else if (reading_bytes == 0){
-            cout << "客户端已关闭，Socket fd: " << client_fd << endl;
-            delClient(client_fd);
-            break;
-        }
-        else {
-            client_info_[client_fd].append(buffer, reading_bytes);
-        }
+        client_info_[client_fd].append(buffer, reading_bytes);
     }
-    cout << "客户端, Socket id: " << client_fd <<"的请求内容为: " \
+    cout << "客户端, Socket id: " << client_fd << "的传输内容为: " \
          << client_info_[client_fd] << endl;
 
-    string response = "Response to client " + to_string(client_fd);
+    epollModFd(client_fd, EPOLLOUT | EPOLLET);
     
+}
+
+void Server::writeEvent(int client_fd) {
+    cout<< "处理写事件" << endl;
+    string response = "来自服务端: 收到收到, over!";
     int w_res = write(client_fd, response.c_str(), response.length());
     if (w_res < 0) {
         cout << "返回信息给客户端失败, Socket fd: " << client_fd << endl;
         close(client_fd);
-        delClient(client_fd);
+        closeSocket(client_fd);
     }
+    cout << "返回数据给客户端(Socket id:)" << client_fd << "成功！";
+    closeSocket(client_fd);
 }
 
 void Server::processWriteEvent(int client_fd) {
+    threadpool_->addTask([this, client_fd]() {
+        writeEvent(client_fd);
+    });
+}
 
+void Server::closeSocket(int client_fd) {
+    epollDelFd(client_fd);
+    delClient(client_fd);
 }
 
 void setNonBlocking(int sockfd) {
