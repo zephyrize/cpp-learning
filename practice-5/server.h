@@ -18,8 +18,8 @@ class Server {
 
 private:
     const int SERVER_PORT = 12345;
-    const int MAX_CLIENTS = 6;
-    const int MAX_EVENTS = 6;
+    const int MAX_CLIENTS = 10;
+    const int MAX_EVENTS = 10;
 
     // struct epoll_event event{};
     struct sockaddr_in server_addr_{}, client_addr_{};
