@@ -19,7 +19,7 @@ class Server {
 private:
     const int SERVER_PORT = 12345;
     const int MAX_CLIENTS = 10;
-    const int MAX_EVENTS = 10;
+    const int MAX_EVENTS = 100;
 
     // struct epoll_event event{};
     struct sockaddr_in server_addr_{}, client_addr_{};
@@ -31,6 +31,7 @@ private:
 
     std::vector<int> connected_clients_;
     std::unordered_map<int, std::string> client_info_;
+    int num_users_;
     std::unique_ptr<ThreadPool> threadpool_;
 
     // using Task = std::function<void()>;
@@ -63,8 +64,12 @@ public:
     */
     // 添加客户端
     void addClient();
+    // 删除客户端
     void delClient(int);
 
+    /*
+    读写事件相关
+    */
     void processReadEvent(int);
     void processWriteEvent(int);
     void writeEvent(int);

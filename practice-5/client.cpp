@@ -126,8 +126,18 @@ void clientTask (int client_id) {
     cout << "Client " << client_id << " 已连接到服务器" << endl;
 
     string message = "Hello server! I am Client with id: " + to_string(client_id) + ".";
-    send(client_socket, message.c_str(), message.size(), 0);
+    ssize_t sent_bytes = send(client_socket, message.c_str(), message.size(), 0);
     
+    if (sent_bytes == -1) {
+        cout << "发送数据到服务端(Client id:" << client_id << ")失败！" << endl;
+    }
+    else if (sent_bytes != static_cast<ssize_t>(message.size())) {
+        cout << "所有数据未全部发送成功(Client id:" << client_id << ")" << endl;
+    }
+    else {
+        cout << "发送数据给服务端(Client id:" << client_id << ")成功！" << endl;
+    }
+
     char buffer[1024];
     memset(buffer, 0, sizeof(buffer));
     int reading_bytes = recv(client_socket, buffer, sizeof(buffer), 0);
@@ -141,7 +151,7 @@ void clientTask (int client_id) {
         cerr << "Error in recv: " << strerror(errno) << endl;
     }
     close(client_socket);
-    cout << "客户端主动关闭：" << client_socket << endl;
+    // cout << "客户端主动关闭：" << client_id << endl;
 }
 
 int main() {

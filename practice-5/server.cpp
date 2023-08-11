@@ -12,6 +12,8 @@ Server::Server() {
 
     threadpool_ = std::make_unique<ThreadPool>(8);
 
+    num_users_ = 0;
+
     bool is_created = initSocket();
     if (is_created == false) {
         cout << "初始化启动服务失败..." << endl;
@@ -66,12 +68,12 @@ bool Server::initSocket() {
     }
     setNonBlocking(server_socket_fd_);
     cout << "开启服务成功，等待客户端连接..." << endl;
-    cout << "server_socket_fd_: " << server_socket_fd_ << endl;
+    // cout << "server_socket_fd_: " << server_socket_fd_ << endl;
     return true;
 }
 
 int Server::epollCreateInstance() {
-    return epoll_create1(0);
+    return epoll_create(256);
 }
 
 bool Server::epollAddFd(int fd, uint32_t ev) {
@@ -90,7 +92,7 @@ bool Server::epollAddFd(int fd, uint32_t ev) {
 
 bool Server::epollModFd(int fd, uint32_t ev) {
     if(fd < 0) return false;
-    epoll_event event = {0};
+    struct epoll_event event = {0};
     event.data.fd = fd;
     event.events = ev;
     return epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, fd, &event) == 0;
@@ -106,10 +108,8 @@ void Server::run() {
     while (true) {
         struct epoll_event events[MAX_EVENTS];
         int ready_events = epoll_wait(epoll_fd_, events, MAX_EVENTS, -1);
-        // cout << "ready_events: " << ready_events << endl;
         for (int i = 0; i < ready_events; ++i) {
             // 服务器套接字上发生了EPOLLIN事件，有新的客户端到达
-            cout << "---当前fd为: " << events[i].data.fd << "---" << endl;
             if (events[i].data.fd == server_socket_fd_) {
                 addClient();
             }
@@ -141,28 +141,59 @@ void Server::addClient() {
     struct sockaddr_in client_addr{};
     socklen_t client_addr_len = sizeof(struct sockaddr_in);
     
-    int client_fd = accept(server_socket_fd_, (struct sockaddr *) &client_addr, &client_addr_len);
-    if (client_fd < 0) {
-        cout << "连接客户端失败" << endl;
-        return ;
-    }
-    //设置非阻塞模式
-    setNonBlocking(client_fd);
+    // int client_fd = accept(server_socket_fd_, (struct sockaddr *) &client_addr, &client_addr_len);
+    // if (client_fd < 0) {
+    //     cout << "连接客户端失败" << endl;
+    //     return ;
+    // }
+    // //设置非阻塞模式
+    // setNonBlocking(client_fd);
 
-    if (epollAddFd(client_fd, EPOLLIN | EPOLLET) == false) {
-        cerr << "添加客户端socket失败." << endl;
-        close(client_fd);
+    // if (epollAddFd(client_fd, EPOLLIN | EPOLLET) == false) {
+    //     cerr << "添加客户端socket失败." << endl;
+    //     close(client_fd);
+    // }
+    // else {
+    //     cout << "添加客户端(Socket id: " << client_fd << ")成功." <<endl;
+    //     connected_clients_.emplace_back(client_fd);
+    // }
+
+    /*
+    解决上述代码在ET模式下丢失客户端连接问题
+    */
+    while (true) {
+        int client_fd = accept(server_socket_fd_, (struct sockaddr *) &client_addr, &client_addr_len);
+        if (client_fd <= 0) return ;
+        if (num_users_ >= MAX_CLIENTS) {
+            string response = "server crowded!";
+            int ret = send(client_fd, response.c_str(), response.size(), 0);
+            if (ret < 0) {
+                cout << "服务端已满，发送该信息到客户端出现错误" << endl;
+            }
+            close(client_fd);
+            return ;
+        }
+
+        if (epollAddFd(client_fd, EPOLLIN | EPOLLET) == false) {
+            cerr << "添加客户端socket失败." << endl;
+            close(client_fd);
+        }
+        else {
+            // //设置非阻塞模式
+            setNonBlocking(client_fd);
+            num_users_++;
+            connected_clients_.emplace_back(client_fd);
+            cout << "添加客户端(Socket id: " << client_fd << ")成功." <<endl;
+        }
     }
-    else {
-        cout << "添加客户端(Socket id: " << client_fd << ")成功." <<endl;
-        connected_clients_.emplace_back(client_fd);
-    }
+    
 }
 
 void Server::delClient(int client_fd) {
     auto it = std::remove(connected_clients_.begin(), connected_clients_.end(), client_fd);
     connected_clients_.erase(it, connected_clients_.end());
     client_info_.erase(client_fd);
+    num_users_--;
 }
 
 void Server::processReadEvent(int client_fd) {
@@ -195,8 +226,8 @@ void Server::readEvent(int client_fd) {
     cout << "客户端, Socket id: " << client_fd << "的传输内容为: " \
          << client_info_[client_fd] << endl;
 
-    // epollModFd(client_fd, EPOLLOUT | EPOLLET);
-    writeEvent(client_fd);
+    epollModFd(client_fd, EPOLLOUT | EPOLLET);
+    // writeEvent(client_fd);
 }
 
 void Server::writeEvent(int client_fd) {
@@ -224,11 +255,8 @@ void Server::processWriteEvent(int client_fd) {
 void Server::closeSocket(int client_fd) {
     cout << "关闭客户端(fd: " << client_fd << ")" << endl;
     epollDelFd(client_fd);
-    // cout << "红黑树上删除client fd: " << client_fd << endl;
     delClient(client_fd);
-    // cout << "删除client相关信息client fd: " << client_fd << endl;
     close(client_fd);
-    cout << "调用close函数关闭client fd: " << client_fd << endl;
 
 }
 
