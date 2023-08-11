@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/sophia/Documents/cpp-learning/practice-6/server_libevent.cpp
+iostream
+-
+cstring
+-
+event2/event.h
+-
+event2/listener.h
+-
+event2/bufferevent.h
+-
+

@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/client_exe.dir/client_libevent.cpp.o  -o client_exe  -lpthread -levent 
